@@ -67,8 +67,107 @@ class Comments(db.Model):
                 "comment_date": self.comment_date,
                 "post_id": self.post_id,
                 "author_id": self.author_id
-                
+                }
+
+class Planets(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    diameter = db.Column(db.Float)
+
+    def __repr__(self):
+        return f'<Planet: {self.name}>'
+
+    def serialize(self):
+        # do not serialize the password, its a security breach
+        return {"id": self.id,
+                "name": self.name,
+                "diameter": self.diameter,
+                }
+
+class Characters(db.Model):
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    description = db.Column(db.String)
+    home_world = db.Column(db.ForeignKey("planets.id"))
+    world = db.relationship("Planets", foreign_keys=[home_world])
+
+    def __repr__(self):
+        return f'<Character: {self.name}>'
+
+    def serialize(self):
+        # do not serialize the password, its a security breach
+        return {"id": self.id,
+                "name": self.name,
+                "description": self.description,
+                "home_world": self.home_world,
+                }
+
+class Films(db.Model):
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    release = db.Column(db.Date, nullable=False)
+    director = db.Column(db.String, nullable=False)
+    
+    def __repr__(self):
+        return f'<Film: {self.name}>'
+
+    def serialize(self):
+        # do not serialize the password, its a security breach
+        return {"id": self.id,
+                "name": self.name,
+                "release": self.release,
+                "director": self.director
                 }
 
 
+class CharactersFilms(db.Model):
+
+    id = db.Column(db.Integer, primary_key=True)
+    role = db.Column(db.String, nullable=False)
+    character_id = db.Column(db.Integer, db.ForeignKey("characters.id"), nullable=False)
+    character_to = db.relationship("Characters", foreign_keys=[character_id])
+    film_id = db.Column(db.Integer, db.ForeignKey("films.id"), nullable=False)
+    film_to = db.relationship("Films", foreign_keys=[film_id])
+
+    def __repr__(self):
+        return f'<Character film: {self.name}>'
+    
+
+    def serialize(self):
+        # do not serialize the password, its a security breach
+        return {"id": self.id,
+                "role": self.role,
+                "character_id": self.character_id,
+                "film_id": self.film_id
+                }
+
+
+class Follower(db.Model): #Falta relationship
+
+    user_from_id = db.Column(db.Integer, primary_key=True)
+    user_to_id = db.Column(db.Integer, nullable=False)
+    
+    def serialize(self):
+        # do not serialize the password, its a security breach
+        return {"user_from_id": self.user_to_id,
+                "user_to_id": self.user_to_id,
+                } 
+
+
+class Media(db.Model): #Falta la relationship
+
+    id = db.Column(db.Integer, primary_key=True)
+    tipe = db.Column(db.String, nullable=False)
+    url = db.Column(db.String)
+    post_id = db.Column(db.Integer)
+    
+    def serialize(self):
+        # do not serialize the password, its a security breach
+        return {"id": self.id,
+                "tipe": self.tipe,
+                "url": self.url,
+                "post_id": self.post_id
+                }                  
 
