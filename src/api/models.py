@@ -146,8 +146,11 @@ class CharactersFilms(db.Model):
 
 class Follower(db.Model): #Falta relationship
 
-    user_from_id = db.Column(db.Integer, primary_key=True)
-    user_to_id = db.Column(db.Integer, nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    user_from_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user_from_to = db.relationship("Users", foreign_keys=[user_from_id])
+    user_to_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user_to_to = db.relationship("Users", foreign_keys=[user_to_id])
     
     def serialize(self):
         # do not serialize the password, its a security breach
@@ -156,18 +159,34 @@ class Follower(db.Model): #Falta relationship
                 } 
 
 
-class Media(db.Model): #Falta la relationship
+class PlanetFavorites(db.Model): #Falta la relationship
 
     id = db.Column(db.Integer, primary_key=True)
-    tipe = db.Column(db.String, nullable=False)
-    url = db.Column(db.String)
-    post_id = db.Column(db.Integer)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user_to = db.relationship("Users", foreign_keys=[user_id])
+    planet_id = db.Column(db.Integer, db.ForeignKey("planets.id"), nullable=False)
+    planet_to = db.relationship("Planets", foreign_keys=[planet_id])
     
     def serialize(self):
         # do not serialize the password, its a security breach
         return {"id": self.id,
-                "tipe": self.tipe,
-                "url": self.url,
-                "post_id": self.post_id
-                }                  
+                "user_id": self.tipe,
+                "planet_id": self.post_id
+                }   
+
+
+class CharacterFavorites(db.Model): #Falta la relationship
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user_to = db.relationship("Users", foreign_keys=[user_id])
+    character_id = db.Column(db.Integer, db.ForeignKey("characters.id"), nullable=False)
+    character_to = db.relationship("Characters", foreign_keys=[character_id])
+    
+    def serialize(self):
+        # do not serialize the password, its a security breach
+        return {"id": self.id,
+                "user_id": self.tipe,
+                "character_id": self.post_id
+                }               
 
