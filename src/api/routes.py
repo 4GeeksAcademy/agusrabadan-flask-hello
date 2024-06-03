@@ -4,7 +4,11 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 from flask import Flask, request, jsonify, url_for, Blueprint
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
-from api.models import db, Users, Posts, Comments
+from api.models import db, Users, Posts, Comments, Characters, Planets
+from datetime import datetime
+from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import jwt_required
 
 api = Blueprint('api', __name__)
 CORS(api)# Allow CORS requests to this API
@@ -14,6 +18,32 @@ CORS(api)# Allow CORS requests to this API
 def handle_hello():
     response_body={}
     response_body ["message"] = "Hello! I'm a message that came from the backend"
+    return response_body, 200
+
+#Ruta para el login
+@api.route("/login", methods=["POST"])
+def login():
+    response_body={}
+    email = request.json.get("email", None)
+    password = request.json.get("password", None)
+    
+    #Logica validacion usuario y contraseña
+    user = db.session.execute(db.select(Users).where(Users.email == email, Users.password == password, Users.is_active == True)).scalar()
+    if user:
+        access_token = create_access_token(identity={"user_id" :user.id, "user_is_admin" : user.is_admin})
+        response_body["message"] = "User Logeado"
+        response_body["access_token"] = access_token
+        return response_body, 200
+    response_body["message"] = "Bad email or password", 404
+
+# Protect a route with jwt_required, which will kick out requests
+@api.route("/profile", methods=["GET"])
+@jwt_required()
+def profile():
+    response_body={}
+    current_user = get_jwt_identity()
+    response_body["message"]= f'User logueado:{current_user}'
+    # Access the identity of the current user with get_jwt_identity
     return response_body, 200
 
 # Rutas para mi pestaña USERS
@@ -173,5 +203,113 @@ def handle_comment(comment_id):
             response_body['message'] = 'Comment deleted'
             response_body['results'] = {}
         response_body['message'] = 'Comment deleted'
+        response_body['results'] = {}
+        return response_body, 200
+
+
+#Lógica para la pestaña Characters
+
+@api.route('/characters', methods=['GET', 'POST'])
+def handle_characters():
+    response_body={}
+    if request.method == 'GET':
+        characters = db.session.execute(db.select(Characters)).scalars()
+        results = [row.serialize() for row in characters]
+        response_body['results'] = results
+        response_body['message'] = "Characters List"
+        return response_body, 200
+    if request.method == 'POST':
+        response_body['message'] = "Not valid endpoint, must LOGIN"
+        return response_body, 404
+
+
+@api.route('/characters/<int:character_id>', methods=['GET', 'PUT', 'DELETE'])
+def handle_character(character_id):
+    response_body = {}
+    if request.method == 'GET':
+        character = db.session.execute(db.select(Characters).where(Characters.id == character_id)).scalar()
+        if character:
+            response_body['results'] = character.serialize()
+            response_body['message'] = 'Character found'
+            return response_body, 200
+        response_body['message'] = 'Character not found'
+        response_body['results'] = {}
+        return response_body, 404
+    if request.method == 'PUT':
+        data = request.json
+        character = db.session.execute(db.select(Characters).where(Characters.id == character_id)).scalar()
+        if character:
+            character.name = data['name']
+            character.description = data['description']
+            character.home_world = data['home_world']
+            db.session.commit()
+            response_body['message'] = 'Character update'
+            response_body['results'] = character.serialize()
+            return response_body, 200
+        response_body['message'] = 'Character not found'
+        response_body['results'] = {}
+        return response_body, 404
+    if request.method == 'DELETE':
+        character = db.session.execute(db.select(Characters).where(Characters.id == character_id)).scalar()
+        if character:
+            db.session.delete(character)
+            db.session.commit()
+            response_body['message'] = 'Character deleted'
+            response_body['results'] = {}
+        response_body['message'] = 'Character deleted'
+        response_body['results'] = {}
+        return response_body, 200
+
+
+#Lógica para planets
+
+@api.route('/planets', methods=['GET', 'POST'])
+def handle_planets():
+    response_body={}
+    if request.method == 'GET':
+        planets = db.session.execute(db.select(Planets)).scalars()
+        results = [row.serialize() for row in planets]
+        response_body['results'] = results
+        response_body['message'] = "Planets List"
+        return response_body, 200
+    if request.method == 'POST':
+        response_body['message'] = "Not valid endpoint, must LOGIN"
+        return response_body, 404
+
+
+@api.route('/planets/<int:planet_id>', methods=['GET', 'PUT', 'DELETE'])
+def handle_planet(planet_id):
+    response_body = {}
+    if request.method == 'GET':
+        planet = db.session.execute(db.select(Planets).where(Planets.id == planet_id)).scalar()
+        if planet:
+            response_body['results'] = planet.serialize()
+            response_body['message'] = 'Planet found'
+            return response_body, 200
+        response_body['message'] = 'Planet not found'
+        response_body['results'] = {}
+        return response_body, 404
+    if request.method == 'PUT':
+        data = request.json
+        planet = db.session.execute(db.select(Planets).where(Planets.id == planet_id)).scalar()
+        if planet:
+            planet.name = data['name']
+            planet.description = data['description']
+            planet.home_world = data['home_world']
+            db.session.commit()
+            response_body['message'] = 'Planet update'
+            response_body['results'] = planet.serialize()
+            return response_body, 200
+        response_body['message'] = 'Planet not found'
+        response_body['results'] = {}
+        return response_body, 404
+    if request.method == 'DELETE':
+        planet = db.session.execute(db.select(Planets).where(Planets.id == planet_id)).scalar()
+        if planet:
+            db.session.delete(planet)
+            db.session.commit()
+            response_body['message'] = 'Planet deleted'
+            response_body['results'] = {}
+        response_body['message'] = 'Planet deleted'
         response_body['results'] = {}
         return response_body, 200
