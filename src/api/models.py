@@ -121,7 +121,6 @@ class Films(db.Model):
                 "director": self.director
                 }
 
-
 class CharactersFilms(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
@@ -143,8 +142,7 @@ class CharactersFilms(db.Model):
                 "film_id": self.film_id
                 }
 
-
-class Follower(db.Model): #Falta relationship
+class Follower(db.Model): 
 
     id = db.Column(db.Integer, primary_key=True)
     user_from_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
@@ -158,8 +156,7 @@ class Follower(db.Model): #Falta relationship
                 "user_to_id": self.user_to_id,
                 } 
 
-
-class PlanetFavorites(db.Model): #Falta la relationship
+class PlanetFavorites(db.Model): 
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
@@ -174,8 +171,7 @@ class PlanetFavorites(db.Model): #Falta la relationship
                 "planet_id": self.post_id
                 }   
 
-
-class CharacterFavorites(db.Model): #Falta la relationship
+class CharacterFavorites(db.Model): 
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
