@@ -4,11 +4,11 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 from flask import Flask, request, jsonify, url_for, Blueprint
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
-from api.models import db, Users, Posts, Comments, Characters, Planets
 from datetime import datetime
-from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import jwt_required
+from flask_jwt_extended import get_jwt_identity
+from api.models import db, Users, Posts, Comments, Characters, Planets
 
 api = Blueprint('api', __name__)
 CORS(api)# Allow CORS requests to this API
@@ -34,7 +34,8 @@ def login():
         response_body["message"] = "User Logeado"
         response_body["access_token"] = access_token
         return response_body, 200
-    response_body["message"] = "Bad email or password", 404
+    response_body['message'] = 'Bad username or password'
+    return response_body, 401
 
 # Protect a route with jwt_required, which will kick out requests
 @api.route("/profile", methods=["GET"])
@@ -102,8 +103,10 @@ def handle_user(user_id):
 
 #Rutas para mi pestaña POSTS
 @api.route('/posts', methods=['GET', 'POST'])
+@jwt_required()
 def handle_posts():
     response_body={}
+    current_user = get_jwt_identity()
     if request.method == 'GET':
         posts = db.session.execute(db.select(Posts)).scalars()
         results = [row.serialize() for row in posts]
@@ -111,8 +114,19 @@ def handle_posts():
         response_body['message'] = "Posts List"
         return response_body, 200
     if request.method == 'POST':
-        response_body['message'] = "Not valid endpoint, must LOGIN"
-        return response_body, 404
+        data = request.json
+        row = Posts()
+        row.title = data['title']
+        row.description = data['description']
+        row.body = data['body']
+        row.image_url = data['image_url']
+        row.publication_date = datetime.today()
+        row.user_id = current_user['user_id']
+        db.session.add(row)
+        db.session.commit()
+        response_body['results'] = row.serialize()
+        response_body['message'] = 'Post created'
+        return response_body, 200
 
 
 @api.route('/posts/<int:post_id>', methods=['GET', 'PUT', 'DELETE'])
@@ -157,8 +171,10 @@ def handle_post(post_id):
 
 #Rutas para mi pestaña Comments
 @api.route('/comments', methods=['GET', 'POST'])
+@jwt_required()
 def handle_comments():
     response_body={}
+    current_user = get_jwt_identity()
     if request.method == 'GET':
         comments = db.session.execute(db.select(Comments)).scalars()
         results = [row.serialize() for row in comments]
@@ -166,8 +182,16 @@ def handle_comments():
         response_body['message'] = "Comments List"
         return response_body, 200
     if request.method == 'POST':
-        response_body['message'] = "Not valid endpoint, must LOGIN"
-        return response_body, 404
+        data = request.json
+        row = Comments()
+        row.body = data['body']
+        row.comment_date = datetime.today()
+        row.author_id = current_user['user_id']
+        db.session.add(row)
+        db.session.commit()
+        response_body['results'] = row.serialize()
+        response_body['message'] = 'Post created'
+        return response_body, 200
 
 
 @api.route('/comments/<int:comment_id>', methods=['GET', 'PUT', 'DELETE'])
