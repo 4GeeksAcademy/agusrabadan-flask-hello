@@ -14,19 +14,12 @@ api = Blueprint('api', __name__)
 CORS(api)# Allow CORS requests to this API
 
 
-@api.route('/hello', methods=['GET'])
-def handle_hello():
-    response_body={}
-    response_body ["message"] = "Hello! I'm a message that came from the backend"
-    return response_body, 200
-
-#Ruta para el login
+#Ruta para el login, esto me genera un token para la sesión si el usuario y contraseña coinciden
 @api.route("/login", methods=["POST"])
 def login():
     response_body={}
     email = request.json.get("email", None)
     password = request.json.get("password", None)
-    
     #Logica validacion usuario y contraseña
     user = db.session.execute(db.select(Users).where(Users.email == email, Users.password == password, Users.is_active == True)).scalar()
     if user:
@@ -187,12 +180,12 @@ def handle_comments():
         row.body = data['body']
         row.comment_date = datetime.today()
         row.author_id = current_user['user_id']
+        row.post_id = data['post_id'] #Preguntar para que lo asigne automático
         db.session.add(row)
         db.session.commit()
         response_body['results'] = row.serialize()
         response_body['message'] = 'Post created'
         return response_body, 200
-
 
 @api.route('/comments/<int:comment_id>', methods=['GET', 'PUT', 'DELETE'])
 def handle_comment(comment_id):
@@ -232,7 +225,6 @@ def handle_comment(comment_id):
 
 
 #Lógica para la pestaña Characters
-
 @api.route('/characters', methods=['GET', 'POST'])
 def handle_characters():
     response_body={}
@@ -243,8 +235,16 @@ def handle_characters():
         response_body['message'] = "Characters List"
         return response_body, 200
     if request.method == 'POST':
-        response_body['message'] = "Not valid endpoint, must LOGIN"
-        return response_body, 404
+        data = request.json
+        row = Characters()
+        row.name = data['name']
+        row.description = data['description']
+        row.home_world = data['home_world'] #Preguntar
+        db.session.add(row)
+        db.session.commit()
+        response_body['results'] = row.serialize()
+        response_body['message'] = 'Character created'
+        return response_body, 200
 
 
 @api.route('/characters/<int:character_id>', methods=['GET', 'PUT', 'DELETE'])
@@ -297,8 +297,15 @@ def handle_planets():
         response_body['message'] = "Planets List"
         return response_body, 200
     if request.method == 'POST':
-        response_body['message'] = "Not valid endpoint, must LOGIN"
-        return response_body, 404
+        data = request.json
+        row = Planets()
+        row.name = data['name']
+        row.diameter = data['diameter']
+        db.session.add(row)
+        db.session.commit()
+        response_body['results'] = row.serialize()
+        response_body['message'] = 'Character created'
+        return response_body, 200
 
 
 @api.route('/planets/<int:planet_id>', methods=['GET', 'PUT', 'DELETE'])

@@ -154,7 +154,7 @@ class Follower(db.Model):
     
     def serialize(self):
         # do not serialize the password, its a security breach
-        return {"user_from_id": self.user_to_id,
+        return {"user_from_id": self.user_from_id,
                 "user_to_id": self.user_to_id,
                 } 
 
