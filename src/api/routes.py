@@ -85,7 +85,7 @@ def handle_user(user_id):
     if request.method == 'DELETE':
         user = db.session.execute(db.select(Users).where(Users.id == user_id)).scalar()
         if user:
-            # db.session.delete(user)
+            db.session.delete(user)
             user.is_active = False
             db.session.commit()
             response_body['message'] = 'Usuario eliminado'
