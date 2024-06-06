@@ -30,11 +30,10 @@ export const Login = () => {
     }
     const data = await response.json();
     console.log(data);
-    // Aquí comienza nuestra lógica
     localStorage.setItem('token', data.access_token)
     actions.setIsLogin(true)
-    actions.setCurrentUser(data.results.email)
-    // console.log(data.access_token);
+    //actions.setCurrentUser(data.results.email)
+    //console.log(data.access_token);
     navigate('/dashboard')
   };
 
@@ -88,4 +87,3 @@ export const Login = () => {
   );
 };
 
-export default Login;

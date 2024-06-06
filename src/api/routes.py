@@ -20,6 +20,7 @@ def login():
     response_body={}
     email = request.json.get("email", None)
     password = request.json.get("password", None)
+    first_name = request.json.get("name", None)
     #Logica validacion usuario y contraseña
     user = db.session.execute(db.select(Users).where(Users.email == email, Users.password == password, Users.is_active == True)).scalar()
     if user:
@@ -38,6 +39,24 @@ def profile():
     current_user = get_jwt_identity()
     response_body["message"]= f'User logueado:{current_user}'
     # Access the identity of the current user with get_jwt_identity
+    return response_body, 200
+
+@api.route('/signup', methods=['POST'])
+def signup():
+    response_body = {}
+    email = request.json.get("email", None).lower()
+    password = request.json.get("password", None)
+    # Logica de verificación de un mail válido y password válido
+    user = Users()
+    user.email = email
+    user.password = password
+    user.is_active = True
+    db.session.add(user)
+    db.session.commit()
+    access_token = create_access_token(identity={'user_id': user.id,
+                                                 'user_is_admin': user.is_admin})
+    response_body['message'] = 'User Registrado y logeado'
+    response_body['access_token'] = access_token
     return response_body, 200
 
 # Rutas para mi pestaña USERS
