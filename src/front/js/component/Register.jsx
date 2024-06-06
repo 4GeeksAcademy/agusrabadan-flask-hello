@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const Signup = () => {
+const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -25,12 +25,12 @@ const Signup = () => {
           <div className="card">
             <div className="card-body">
               <h2 className="card-title text-center mb-3 display-5">
-                Registro
+                New User
               </h2>
               <form onSubmit={handleSubmit}>
                 <div className="form-group mt-3 h6">
                   <label htmlFor="email" className="mb-1">
-                    Correo electrónico:
+                    Email:
                   </label>
                   <input
                     type="email"
@@ -43,7 +43,7 @@ const Signup = () => {
                 </div>
                 <div className="form-group mt-3 h6">
                   <label htmlFor="password" className="mb-1">
-                    Contraseña:
+                    Password:
                   </label>
                   <input
                     type="password"
@@ -56,7 +56,7 @@ const Signup = () => {
                 </div>
                 <div className="text-center">
                   <button type="submit" className="btn btn-primary mt-5">
-                    Registrarse
+                    Create user
                   </button>
                 </div>
               </form>
@@ -68,4 +68,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default Register;

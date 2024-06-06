@@ -6,7 +6,9 @@ import { BackendURL } from "./component/backendURL";
 import { Home } from "./pages/home";
 import { Demo } from "./pages/demo";
 import { Single } from "./pages/single";
-import Signup from "./component/SignUp.jsx";
+import Login from "./component/Login.jsx";
+import Register from "./component/Register.jsx";
+import Dashboard from "./component/Dashboard.jsx";
 import injectContext from "./store/appContext";
 
 import { Navbar } from "./component/navbar";
@@ -25,12 +27,13 @@ const Layout = () => {
             <BrowserRouter basename={basename}>
                 <ScrollToTop>
                     <Navbar />
-                    <Signup/>
                     <Routes>
                         <Route element={<Home />} path="/" />
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Single />} path="/single/:theid" />
-                        <Route element={<Signup />} path="/signup" />
+                        <Route element={<Login />} path="/login" />
+                        <Route element={<Register />} path="/register" />
+                        <Route element={<Dashboard />} path="/dashboard" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     <Footer />
