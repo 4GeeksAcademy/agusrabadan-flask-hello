@@ -8,14 +8,18 @@ export const Signup = () => {
     const { actions } = useContext(Context)
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [first_name, setName] = useState("");
+    const [last_name, setLastName] = useState("");
     const navigate = useNavigate();
 
     const handleEmailChange = (event) => { setEmail(event.target.value); };
     const handlePasswordChange = (event) => { setPassword(event.target.value); };
+    const handleNameChange = (event) => { setName(event.target.value); };
+    const handleLastNameChange = (event) => { setLastName(event.target.value); };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const dataToSend = { email, password };
+        const dataToSend = { email, password, first_name, last_name };
         const url = `${process.env.BACKEND_URL}/api/signup`;
         const options = {
             method: 'POST',
@@ -56,6 +60,16 @@ export const Signup = () => {
                                     <label htmlFor="password" className="mb-1">Password:</label>
                                     <input type="password" className="form-control" id="password"
                                         value={password} onChange={handlePasswordChange} required />
+                                </div>
+                                <div className="form-group mt-3 h6">
+                                    <label htmlFor="name" className="mb-1">Name:</label>
+                                    <input type="text" className="form-control" id="name"
+                                        value={first_name} onChange={handleNameChange} required />
+                                </div>
+                                <div className="form-group mt-3 h6">
+                                    <label htmlFor="lastName" className="mb-1">Last Name:</label>
+                                    <input type="text" className="form-control" id="lastName"
+                                        value={last_name} onChange={handleLastNameChange} required />
                                 </div>
                                 <div className="text-center">
                                     <button type="submit" className="btn btn-primary mt-5">Create account</button>

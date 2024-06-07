@@ -47,10 +47,14 @@ def signup():
     response_body = {}
     email = request.json.get("email", None).lower()
     password = request.json.get("password", None)
+    first_name = request.json.get("first_name", None)
+    last_name = request.json.get("last_name", None)
     # Logica de verificación de un mail válido y password válido
     user = Users()
     user.email = email
     user.password = password
+    user.first_name = first_name
+    user.last_name = last_name
     user.is_active = True
     db.session.add(user)
     db.session.commit()
