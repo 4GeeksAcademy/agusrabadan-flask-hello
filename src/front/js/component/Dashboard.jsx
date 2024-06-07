@@ -17,7 +17,7 @@ export const Dashboard = () => {
 
     return (
         <div className="text-center">
-            <h1>ESTAS LOGUEADO, PAGINA RESTRINGIDA</h1>
+            <h1>ESTAS LOGUEADO, PAGINA RESTRINGIDA SOLO PARA USUARIOS</h1>
             <div className="spinner-grow text-primary" role="status">
                 <span className="visually-hidden">Loading...</span>
             </div>

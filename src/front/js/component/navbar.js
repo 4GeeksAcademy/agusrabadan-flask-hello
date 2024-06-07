@@ -30,7 +30,7 @@ export const Navbar = () => {
 						<>
 							<div class="dropdown">
 								<button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-									Welcome 
+									Welcome {store.user.first_name}
 								</button>
 								<ul class="dropdown-menu">
 									<li><Link to="/profile"><span onClick={profile} className="text-secondary">Profile</span></Link></li>
@@ -42,7 +42,7 @@ export const Navbar = () => {
 						:
 						<>
 							<Link to="/login"><button className="btn btn-primary ms-2">Login</button></Link>
-							<Link to="/signup"><button className="btn btn-success ms-2">Register</button></Link>
+							
 						</>
 					}
 				</div>

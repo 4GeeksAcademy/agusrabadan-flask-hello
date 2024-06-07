@@ -27,6 +27,7 @@ def login():
         access_token = create_access_token(identity={"user_id" :user.id, "user_is_admin" : user.is_admin})
         response_body["message"] = "User Logeado"
         response_body["access_token"] = access_token
+        response_body["results"] = user.serialize()
         return response_body, 200
     response_body['message'] = 'Bad username or password'
     return response_body, 401

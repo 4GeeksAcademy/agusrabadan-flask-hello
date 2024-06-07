@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext.js";
+import { Link } from "react-router-dom";
 
 
 export const Login = () => {
@@ -32,7 +33,7 @@ export const Login = () => {
     console.log(data);
     localStorage.setItem('token', data.access_token)
     actions.setIsLogin(true)
-    //actions.setCurrentUser(data.results.email)
+    actions.setCurrentUser(data.results)
     //console.log(data.access_token);
     navigate('/dashboard')
   };
@@ -74,9 +75,10 @@ export const Login = () => {
                   />
                 </div>
                 <div className="text-center">
-                  <button type="submit" className="btn btn-primary mt-5">
+                  <button type="submit" className="btn btn-success mt-5">
                     Sign in
                   </button>
+                  <Link to="/signup"> <p className="text-center mt-2"> You don´t have an account? Create one here</p></Link>
                 </div>
               </form>
             </div>
