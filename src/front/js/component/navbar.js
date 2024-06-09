@@ -6,9 +6,6 @@ import { Context } from "../store/appContext.js";
 export const Navbar = () => {
 	const { store, actions } = useContext(Context)
 
-	
-
-
 	const logout = () => {
 		console.log('estoy en logout')
 		actions.setIsLogin(false)

@@ -49,6 +49,13 @@ def signup():
     password = request.json.get("password", None)
     first_name = request.json.get("first_name", None)
     last_name = request.json.get("last_name", None)
+    
+    #Logica que dice si el email ya existe
+    existing_user = Users.query.filter_by(email=email).first()
+    if existing_user:
+        response_body['message'] = 'User already exists'
+        return response_body, 409  # Código de estado 409 Conflict
+
     # Logica de verificación de un mail válido y password válido
     user = Users()
     user.email = email
