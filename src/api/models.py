@@ -60,7 +60,7 @@ class Comments(db.Model):
 
     
     def __repr__(self):
-        return f'<Comment: {self.title}>'
+        return f'<Comment: {self.body}>'
 
     def serialize(self):
         # do not serialize the password, its a security breach
@@ -169,8 +169,8 @@ class PlanetFavorites(db.Model):
     def serialize(self):
         # do not serialize the password, its a security breach
         return {"id": self.id,
-                "user_id": self.tipe,
-                "planet_id": self.post_id
+                "user_id": self.user_id,
+                "planet_id": self.planet_id
                 }   
 
 class CharacterFavorites(db.Model): 
@@ -184,7 +184,7 @@ class CharacterFavorites(db.Model):
     def serialize(self):
         # do not serialize the password, its a security breach
         return {"id": self.id,
-                "user_id": self.tipe,
-                "character_id": self.post_id
+                "user_id": self.user_id,
+                "character_id": self.character
                 }               
 
