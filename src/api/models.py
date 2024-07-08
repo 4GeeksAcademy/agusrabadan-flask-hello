@@ -185,6 +185,5 @@ class CharacterFavorites(db.Model):
         # do not serialize the password, its a security breach
         return {"id": self.id,
                 "user_id": self.user_id,
-                "character_id": self.character
+                "character_id": self.character_id
                 }               
-
